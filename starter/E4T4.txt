@@ -1,8 +1,16 @@
 
 # What additional architectural change can be made to reduce the internet facing attack surface of the web application instance.
+A NAT gateway could be placed between the application load balancer and the WebApp instance to further shield it from the public internet.
+Additionally, the WebApp instance could be placed in a private subnet to limit its access to the internet.
 
 # Assuming the IAM permissions for the S3 bucket are still insecure, would creating VPC private endpoints for S3 prevent the unauthorized access to the secrets bucket.
+Yes, a private VPC endpoint would connect the WebApp instance to the s3 bucket through a private gateway instead of through the public access. 
+It would essentially only accept requests that were made through the WebApp instance.
 
 # Will applying default encryption setting to the s3 buckets encrypt the data that already exists?
+No, enabling server-side encryption does not change the encryption of existing objects, if they were unencrypted before encryption was enabled,
+they will remain unencrypted.
 
 # What would happen if the original cloud formation templates are applied to this environment.
+If the original cloud formation templates were applied to this environment, the conditions would be evaluated with boolean logic, but 
+since the security hardening measures contain various explicit deny statements the final decision will to be to deny certain actions.

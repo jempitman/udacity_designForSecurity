@@ -1,13 +1,19 @@
 # Identify tools that will allow you to do the following:
 
 ## Scan infrastructure as code templates
+TFLint and tfsec can be used to scan terraform configuration files
 
 ### Example vulnerability
+security risks and compliance violations in configuration files
 
 ##Scan AMI’s or containers for OS vulnerabilities
+Amazon Inspector and Tenable Nessus
 
 ### Example vulnerability
+OS vulnerabilities on application servers
 
 ##Scan an AWS environment for cloud configuration vulnerabilities
+AWS Config
 
 ### Example vulnerability
+Badly configured security rules or lack of MFA for root user access on AWS resources

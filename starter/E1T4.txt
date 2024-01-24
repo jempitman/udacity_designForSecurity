@@ -1,5 +1,10 @@
 Based on the architecture diagram, and the steps you have taken so far to upload data and access the application web service, identify at least 2 obvious poor practices as it relates to security.  Include justification.
 
 # Poor practice 1
+Security group access rules are far too permissive, as they allow traffic from everywhere (0.0.0.0/0) through the Application Load Balancer, through the Application server, to the free-recipe bucket. The ingress and egress rules on the application load balancer and application server should be tightened to only accept traffic from each other and thereby limit access to the s3 bucket 
 
 # Poor practice 2
+The Application Load Balancer and application server is in a "trusted" public subnet. If a malicious entity were to breach the subnet they would have free reign to repurpose the resources for nefarious purposes. The Application server should rather be placed in a secured private subnet with a NAT gateway to shield it from the public internet
+
+# Poor practice 3
+The S3 buckets should communicate with the application load balancer using VPC endpoints rather than being directly connected to the Application Load Balancer

@@ -1,3 +1,56 @@
-Research and analyze which of the vulnerabilities appear to be related to the code that was deployed for the environment in this project.
+Research and analyze which of the vulnerabilities appear to be related to the code that was deployed for the 
+environment in this project.
 
-Bonus - provide recommendations on how to remediate the vulnerabilities.
+1. Security groups for the WebApp and AttackInstance EC2 instances are defined in the c3-app.yml file for the c3-app stack (WebAppSG and 
+AttackInstanceSG), but should not allow ingress from the public internet (0.0.0.0/0) to high value ports (IDs: EC2.13, EC2.14, EC2.18 and EC2.19). 
+Instead, the security groups should only allow least privileged access to these instances. 
+
+This can be remediated by deleting the rule allowing ingress from 0.0.0.0/0 and defining new rules for least privileged access to these resources
+with a smaller CIDR block.
+
+2. The default VPC security group for the EC2 instances should not allow inbound or outbound traffic, as it cannot be deleted once deployed 
+(ID: EC2.2). to remediate this error, a custom least-privileged security group should be created to limit inbound and outbound traffic to the EC2 instances.
+
+3. The WebApp and AttackInstance EC2 instances should use Instance Metadata Service Version 2 (IMDSv2) to access temporary, frequently rotated
+credentials as IMDSv2 removes the need to hard code or distribute sensitive credentials to the instances (ID: EC2.8). To remediate this error the EC2
+instances should be configured with IMDSv2 by setting the `HTTPTokens` field in the MetadataOptions section of the EC2 launch template to required,
+ as part of efforts to hardening of the instances from malicious attacks.
+
+4. The WebApp and AttackInstance EC2 instances both have public IP addresses, as they are defined in a default public subnet in c3-app.yml 
+(ID: EC2.9). Once assigned, the public IP address cannot be removed, so the instance becomes a target on the public internet. This can be 
+remediated by defining these instances in a non-default VPC and disabling the assigning of a public IP address by setting the AssociatePublicIpAddress
+property in the EC2 Instance launch template to false in c3-app.yml. 
+
+5. The EC2 subnets defined in c3-vpc.yml should not automatically assign public IP addresses (ID: EC2.15). This can be remediated by the setting
+the MapPublicIpOnLaunch property in the subnet definitions in the c3-vpc.yml stack template to false.
+
+6. The free and secret S3 buckets defined in stack template c3-s3.yml should have event notifications enabled (ID: S3.11). This can be remediated
+by setting up a SNS topic, SQS queue, Lambda function or EventBridge rule to which notifications can be published whenever a significant event 
+occurs in S3.
+
+7.  The free and secret S3 buckets defined in c3-s3.yml should require requests to use Secure Socket Layer (SSL) (ID: S3.5). This can be remediated 
+by defining a policy for each bucket in c3-s3.yml that includes the boolean condition aws:SecureTransport that is set to false.
+
+8. The free and secret s3 buckets defined in c3-s3.yml should have server access logging to a chosen target bucket (ID: S3.9), in order to track 
+requests made to these buckets. This can be remediated by creating server access logging buckets and setting the LoggingConfiguration property
+for the free and secret s3 buckets in the c3-s3.yml stack template to log all requests to these dedicated logging buckets (https://docs.aws.amazon
+.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-loggingconfiguration.html).
+
+9. The WebApp and AttackInstance EC2 instances defined in c3-app.yml should use dedicated VPC endpoints (ID: EC2.10) to establish a private connection
+between the EC2 instances and the VPC. This can be remediated by setting the AWS::EC2:VPCEndpoint properties in the c3-app.yml stack template for 
+the EC2 instances according to the following template (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpcendpoint.html)
+
+10. The network Access Control List (NACL) for the WebApp and AttackInstance EC2 instances should not allow ingress from 0.0.0.0/0 to port 22 or 
+port 3389 (ID: EC2.21). This can be remediated by defining an NACL for the WebApp and AttackInstance EC2 instances in the c3-app.yml stack template
+that limits the inbound and outbound traffic to the EC2 instances, as an extra layer of protection for ingress to the SSH and RDP ports (22 and 3389).
+
+11. The EBS volumes for the WebApp and AttackInstance EC2 instances should be encrypted at rest by default (ID: EC2.3 and EC2.7). This can be remediated by setting 
+the boolean encrypted property to true in the AWS::EC2:Instance Ebs definition in s3-app.yml stack template.
+
+12. The Application load balancer defined in c3-app.yml should be configured to redirect all http requests to https (ID: ELB.1). This can be 
+remediated by adding a rule for all http requests entering port 80 to be redirected to https through port 443 or declaring  an 
+AWS::ElasticLoadBalancingV2::Listener resource with a default redirect action in the c3-app.yml according to the example in
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listener.html.
+
+
+Bonus - provide recommendations on how to remediate the vulnerabi

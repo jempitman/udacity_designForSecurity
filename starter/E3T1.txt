@@ -1,3 +1,8 @@
 # Describe GuardDuty findings that were detected related to the brute force attack
+GuardDuty detected both a high and low severity EC2/SSHBruteForce attack on my account, which correspond with the actions performed in the
+defensive security assessment as both the AttackInstance and WedApp instances belong to me. The AttackInstance triggered the high severity 
+attack (since it was being used for the attack) and the WebApp triggered the low severity attack (since it was defending against the attack).
 
 # Research the AWS Guard Duty documentation page and explain how GuardDuty may have detected this attack - i.e. what was its source of information.
+The low severity attack was triggered by monitoring the VPC flowlogs on port 22, since the attack attempts to guess the password by attempting
+multiple logins in a short space of time.

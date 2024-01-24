@@ -1,5 +1,16 @@
-
+Password authentication for the EC2 instance could be revoked by setting PasswordAuthentication to "no" in the /etc/ssh/ssh_config file
+The security group could be updated to a least-privileged basis by restricting ssh, TCP, UDP and ICMP access only to specific addresses.
+Enforce multi-factor authentication (MFA) for root access to the instances
+Limit login attempts or introduce a delay between successive login attempts
+Set up a web application firewall to enforce a maximum number of requests from a url within a certain timeframe before blocking the requests
+Deny root SSH logins
 
 # Identify 2-3 changes that can be made to our environment to prevent an ssh brute force attack from the internet.
+
+
+The secret bucket's bucket policy should allow least privilege access to people who absolutely need it and encrypt objects for everybody else.
+Additionally, access to the bucket and its contents can also be limited with IAM user policies to only allow users with a certain roles
+to access the bucket objects. Finally, MFA-protected API access could also be applied to ensure that the user has to authenticate with an 
+AWS MFA device in order to download or read the secret recipe.
 
 # Neither instance should have had access to the secret recipes bucket, in the even that instance API credentials were compromised how could we have prevented access to sensitive data.
